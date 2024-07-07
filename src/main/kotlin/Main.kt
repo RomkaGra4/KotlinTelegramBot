@@ -10,9 +10,8 @@ fun main() {
     wordsFile.appendText("dog собака\n")
     wordsFile.appendText("cat кошка\n")
 
-    var i = 0
-    while (i < wordsFile.length()) {
-        println(wordsFile.readLines()[i])
-        i++
+    wordsFile.readLines().forEach {
+        println(it)
     }
+
 }
