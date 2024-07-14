@@ -18,6 +18,15 @@ fun main() {
         println(word)
     }
 
+    while(true){
+        println("\nМеню:")
+        when(readln().toInt()){
+            1 -> println("Учить слова")
+            2 -> println("Статистика")
+            0 -> break
+            else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
+        }
+    }
 }
 
 data class Word(
