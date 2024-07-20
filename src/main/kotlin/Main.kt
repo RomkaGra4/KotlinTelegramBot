@@ -12,21 +12,25 @@ fun main() {
     wordsFile.appendText("good morning|доброе утро\n")
 
     val lines: MutableList<String> = wordsFile.readLines().toMutableList()
+    val dictionary: MutableList<Word> = mutableListOf()
+
     for (line in lines) {
-        val line = line.split("|")
+        val text = line.split("|")
 
-        val word = Word(englishText = line[0], russianText = line[1])
-        println(word)
+        val word = Word(englishText = text[0], russianText = text[1])
+        dictionary.add(word)
     }
+    println(dictionary)
 
-    while(true){
+    while (true) {
         println("\nМеню:")
-        when(readln().toInt()){
+        when (readln().toInt()) {
             1 -> println("Учить слова")
             2 -> {
                 print("Статистика: ")
-                wordsFile.filter()
+                dictionary.showStatistics()
             }
+
             0 -> break
             else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
         }
@@ -39,12 +43,15 @@ data class Word(
     val correctAnswersCount: Int = 0,
 )
 
-fun File.filter() {
+fun MutableList<Word>.showStatistics() {
 
-    val allWords = 6
-    val count = 4
+    val mutableList = this.filter {
+        it.correctAnswersCount >= 3
+    }
+
+    val allWords = this.size
+    val count = mutableList.size
     val percent = ((count.toDouble() / allWords) * 100).toInt()
 
     println("Выучено $count из $allWords слов | $percent%")
-
 }
