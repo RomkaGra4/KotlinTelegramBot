@@ -2,6 +2,8 @@ package org.example
 
 import java.io.File
 
+    const val MAX_COUNT = 3
+
 fun main() {
 
     val wordsFile: File = File("words.txt")
@@ -19,6 +21,7 @@ fun main() {
 
         val word = Word(englishText = text[0], russianText = text[1])
         dictionary.add(word)
+
     }
     println(dictionary)
 
@@ -46,7 +49,7 @@ data class Word(
 fun MutableList<Word>.showStatistics() {
 
     val mutableList = this.filter {
-        it.correctAnswersCount >= 3
+        it.correctAnswersCount >= MAX_COUNT
     }
 
     val allWords = this.size
