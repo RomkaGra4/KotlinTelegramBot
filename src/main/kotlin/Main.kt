@@ -2,27 +2,21 @@ package org.example
 
 import java.io.File
 
-    const val MAX_COUNT = 3
+const val MAX_CORRECT_ANSWER_COUNT = 3
 
 fun main() {
 
     val wordsFile: File = File("words.txt")
     wordsFile.createNewFile()
-    wordsFile.writeText("hello|привет\n")
-    wordsFile.appendText("dog|собака\n")
-    wordsFile.appendText("cat|кошка\n")
-    wordsFile.appendText("good morning|доброе утро\n")
 
-    val lines: MutableList<String> = wordsFile.readLines().toMutableList()
     val dictionary: MutableList<Word> = mutableListOf()
-
-    for (line in lines) {
-        val text = line.split("|")
+    wordsFile.readLines().map {
+        val text = it.split("|")
 
         val word = Word(englishText = text[0], russianText = text[1])
         dictionary.add(word)
-
     }
+
     println(dictionary)
 
     while (true) {
@@ -49,7 +43,7 @@ data class Word(
 fun MutableList<Word>.showStatistics() {
 
     val mutableList = this.filter {
-        it.correctAnswersCount >= MAX_COUNT
+        it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT
     }
 
     val allWords = this.size
