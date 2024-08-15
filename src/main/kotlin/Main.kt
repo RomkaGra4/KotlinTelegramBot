@@ -22,11 +22,10 @@ fun main() {
     while (true) {
         println("\nМеню:")
         when (readln().toInt()) {
-            1 -> println("Учить слова")
-            2 -> {
-                print("Статистика: ")
-                dictionary.showStatistics()
-            }
+            1 -> { println("УЧИТЬ СЛОВА")
+                dictionary.learnWords()}
+            2 -> { print("СТАТИСТИКА: ")
+                dictionary.showStatistics()}
 
             0 -> break
             else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
@@ -34,21 +33,20 @@ fun main() {
     }
 }
 
-data class Word(
-    val englishText: String,
-    val russianText: String,
-    val correctAnswersCount: Int = 0,
-)
+fun MutableList<Word>.learnWords() {
 
-fun MutableList<Word>.showStatistics() {
+    val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
 
-    val mutableList = this.filter {
-        it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT
-    }
+    val answers = unlearnedWords.take(4).shuffled()
 
-    val allWords = this.size
-    val count = mutableList.size
-    val percent = ((count.toDouble() / allWords) * 100).toInt()
+    println("Выбери правильный вариант перевода: " + answers.random().englishText)
+    println(answers.map { it.russianText })
 
-    println("Выучено $count из $allWords слов | $percent%")
+    for (i in 0..answers.size - 1)
+        if (answers[i].correctAnswersCount < 3){
+            continue
+        } else {
+            println("Вы выучили все слова!")
+            break
+        }
 }
