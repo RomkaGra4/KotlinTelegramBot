@@ -20,6 +20,9 @@ fun main() {
     println(dictionary)
 
     while (true) {
+
+        loadDictionary()
+
         println("\nМеню:")
         when (readln().toInt()) {
             1 -> { println("УЧИТЬ СЛОВА")
@@ -31,6 +34,10 @@ fun main() {
             else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
         }
     }
+}
+
+fun loadDictionary() {
+    TODO("Not yet implemented")
 }
 
 fun MutableList<Word>.learnWords() {
@@ -49,4 +56,14 @@ fun MutableList<Word>.learnWords() {
             println("Вы выучили все слова!")
             break
         }
+}
+
+fun MutableList<Word>.showStatistics() {
+
+    val mutableList = this.filter {
+        it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT
+    }
+
+    println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
+
 }
