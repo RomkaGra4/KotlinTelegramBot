@@ -6,6 +6,29 @@ const val MAX_CORRECT_ANSWER_COUNT = 3
 
 fun main() {
 
+    while (true) {
+
+        val dictionary: List<Word> = loadDictionary()
+
+        println("\nМеню:")
+        when (readln().toInt()) {
+            1 -> {
+                println("УЧИТЬ СЛОВА")
+                dictionary.learnWords()
+            }
+
+            2 -> {
+                print("СТАТИСТИКА: ")
+                dictionary.showStatistics()
+            }
+
+            0 -> break
+            else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
+        }
+    }
+}
+
+fun loadDictionary(): List<Word> {
     val wordsFile: File = File("words.txt")
     wordsFile.createNewFile()
 
@@ -17,30 +40,10 @@ fun main() {
         dictionary.add(word)
     }
 
-    println(dictionary)
-
-    while (true) {
-
-        loadDictionary()
-
-        println("\nМеню:")
-        when (readln().toInt()) {
-            1 -> { println("УЧИТЬ СЛОВА")
-                dictionary.learnWords()}
-            2 -> { print("СТАТИСТИКА: ")
-                dictionary.showStatistics()}
-
-            0 -> break
-            else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
-        }
-    }
+    return dictionary
 }
 
-fun loadDictionary() {
-    TODO("Not yet implemented")
-}
-
-fun MutableList<Word>.learnWords() {
+fun List<Word>.learnWords() {
 
     val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
 
@@ -50,7 +53,7 @@ fun MutableList<Word>.learnWords() {
     println(answers.map { it.russianText })
 
     for (i in 0..answers.size - 1)
-        if (answers[i].correctAnswersCount < 3){
+        if (answers[i].correctAnswersCount < 3) {
             continue
         } else {
             println("Вы выучили все слова!")
@@ -58,12 +61,13 @@ fun MutableList<Word>.learnWords() {
         }
 }
 
-fun MutableList<Word>.showStatistics() {
+fun List<Word>.showStatistics() {
 
     val mutableList = this.filter {
         it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT
     }
 
     println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
-
 }
+
+
