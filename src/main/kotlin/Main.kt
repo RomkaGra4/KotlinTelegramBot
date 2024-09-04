@@ -6,6 +6,29 @@ const val MAX_CORRECT_ANSWER_COUNT = 3
 
 fun main() {
 
+    while (true) {
+
+        val dictionary: List<Word> = loadDictionary()
+
+        println("\nМеню:")
+        when (readln().toInt()) {
+            1 -> {
+                println("УЧИТЬ СЛОВА")
+                dictionary.learnWords()
+            }
+
+            2 -> {
+                print("СТАТИСТИКА: ")
+                dictionary.showStatistics()
+            }
+
+            0 -> break
+            else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
+        }
+    }
+}
+
+fun loadDictionary(): List<Word> {
     val wordsFile: File = File("words.txt")
     wordsFile.createNewFile()
 
@@ -17,38 +40,34 @@ fun main() {
         dictionary.add(word)
     }
 
-    println(dictionary)
-
-    while (true) {
-        println("\nМеню:")
-        when (readln().toInt()) {
-            1 -> println("Учить слова")
-            2 -> {
-                print("Статистика: ")
-                dictionary.showStatistics()
-            }
-
-            0 -> break
-            else -> println("Внимание! Введите 1, 2 или для выхода нажмите 0.")
-        }
-    }
+    return dictionary
 }
 
-data class Word(
-    val englishText: String,
-    val russianText: String,
-    val correctAnswersCount: Int = 0,
-)
+fun List<Word>.learnWords() {
 
-fun MutableList<Word>.showStatistics() {
+    val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
+
+    val answers = unlearnedWords.take(4).shuffled()
+
+    println("Выбери правильный вариант перевода: " + answers.random().englishText)
+    println(answers.map { it.russianText })
+
+    for (i in 0..answers.size - 1)
+        if (answers[i].correctAnswersCount < 3) {
+            continue
+        } else {
+            println("Вы выучили все слова!")
+            break
+        }
+}
+
+fun List<Word>.showStatistics() {
 
     val mutableList = this.filter {
         it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT
     }
 
-    val allWords = this.size
-    val count = mutableList.size
-    val percent = ((count.toDouble() / allWords) * 100).toInt()
-
-    println("Выучено $count из $allWords слов | $percent%")
+    println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
 }
+
+
