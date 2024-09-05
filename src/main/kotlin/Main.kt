@@ -75,7 +75,6 @@ fun List<Word>.learnWords() {
             println("Выберите 1 из 4 вариантов ответа, указав правильный по списку!")
         }
 
-
         for (element in unlearnedWords) {
             if (element.correctAnswersCount < 3) {
                 continue
@@ -99,5 +98,3 @@ fun List<Word>.showStatistics() {
 
     println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
 }
-
-
