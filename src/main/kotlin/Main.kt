@@ -1,5 +1,4 @@
 package org.example
-
 import java.io.File
 
 const val MAX_CORRECT_ANSWER_COUNT = 3
@@ -49,7 +48,6 @@ fun List<Word>.learnWords() {
 
         val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
         val answers = unlearnedWords.take(4).shuffled()
-
         val question = answers.random()
 
         println("\nВыбери правильный вариант перевода: " + question.englishText)
@@ -99,5 +97,3 @@ fun List<Word>.showStatistics() {
 
     println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
 }
-
-
