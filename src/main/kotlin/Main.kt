@@ -45,20 +45,50 @@ fun loadDictionary(): List<Word> {
 
 fun List<Word>.learnWords() {
 
-    val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
+    while (true) {
 
-    val answers = unlearnedWords.take(4).shuffled()
+        val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
+        val answers = unlearnedWords.take(4).shuffled()
 
-    println("Выбери правильный вариант перевода: " + answers.random().englishText)
-    println(answers.map { it.russianText })
+        val question = answers.random()
 
-    for (i in 0..answers.size - 1)
-        if (answers[i].correctAnswersCount < 3) {
-            continue
-        } else {
-            println("Вы выучили все слова!")
+        println("\nВыбери правильный вариант перевода: " + question.englishText)
+        println(answers.map { it.russianText })
+
+        val userResponse = readln().toInt()
+
+        if (userResponse in 1..4) {
+
+            if (answers[userResponse - 1].englishText == question.englishText) {
+                println("Это правильный ответ!")
+                answers[userResponse - 1].correctAnswersCount += 1
+                saveDictionary()
+            } else {
+                println("Нет, это неправильный ответ.")
+            }
+
+
+        } else if (userResponse == 0) {
+            println("Вы вышли в ГЛАВНОЕ МЕНЮ")
             break
+        } else {
+            println("Выберите 1 из 4 вариантов ответа, указав правильный по списку!")
         }
+
+
+        for (element in unlearnedWords) {
+            if (element.correctAnswersCount < 3) {
+                continue
+            } else {
+                println("Вы выучили все слова!")
+                break
+            }
+        }
+    }
+}
+
+fun saveDictionary() {
+    loadDictionary()
 }
 
 fun List<Word>.showStatistics() {
