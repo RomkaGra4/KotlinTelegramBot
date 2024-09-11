@@ -1,4 +1,5 @@
 package org.example
+
 import java.io.File
 
 const val MAX_CORRECT_ANSWER_COUNT = 3
@@ -52,7 +53,7 @@ fun List<Word>.learnWords() {
         val question = answers.random()
 
         println("\nВыбери правильный вариант перевода: " + question.englishText)
-        println(variants.take(4).map{ it.russianText })
+        println(variants.take(4).map { it.russianText })
 
         val userResponse = readln().toInt()
 
@@ -86,9 +87,20 @@ fun List<Word>.learnWords() {
     }
 }
 
-fun saveDictionary(answers: List<Word>) {
+fun saveDictionary(answers: List<Word>): MutableList<Word> {
     val wordsFile: File = File("words.txt")
-        wordsFile.writeText(answers.toString())
+    wordsFile.writeText(answers.toString())
+
+    val dictionary: MutableList<Word> = mutableListOf()
+    wordsFile.readLines().map {
+        val text = it.split("|")
+
+        val word = Word(englishText = text[0], russianText = text[1])
+        dictionary.add(word)
+    }
+
+    return dictionary
+
 }
 
 fun List<Word>.showStatistics() {
