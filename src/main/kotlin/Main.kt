@@ -87,20 +87,14 @@ fun List<Word>.learnWords() {
     }
 }
 
-fun saveDictionary(answers: List<Word>): MutableList<Word> {
+fun saveDictionary(answers: List<Word>) {
     val wordsFile: File = File("words.txt")
     wordsFile.writeText(answers.toString())
 
-    val dictionary: MutableList<Word> = mutableListOf()
-    wordsFile.readLines().map {
-        val text = it.split("|")
-
-        val word = Word(englishText = text[0], russianText = text[1])
-        dictionary.add(word)
+    val fileContent = answers.joinToString("\n") {
+        "${it.englishText}|${it.russianText}|${it.correctAnswersCount}"
     }
-
-    return dictionary
-
+    wordsFile.writeText(fileContent)
 }
 
 fun List<Word>.showStatistics() {
