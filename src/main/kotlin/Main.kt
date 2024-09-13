@@ -49,20 +49,20 @@ fun List<Word>.learnWords() {
 
         val unlearnedWords = this.takeWhile { it.correctAnswersCount < 3 }
         val answers = unlearnedWords.take(4).shuffled()
-
+        val variants = this.take(4).shuffled()
         val question = answers.random()
 
         println("\nВыбери правильный вариант перевода: " + question.englishText)
-        println(answers.map { it.russianText })
+        println(variants.take(4).map { it.russianText })
 
         val userResponse = readln().toInt()
 
         if (userResponse in 1..4) {
 
-            if (answers[userResponse - 1].englishText == question.englishText) {
+            if (variants[userResponse - 1].englishText == question.englishText) {
                 println("Это правильный ответ!")
                 answers[userResponse - 1].correctAnswersCount += 1
-                saveDictionary()
+                saveDictionary(answers)
             } else {
                 println("Нет, это неправильный ответ.")
             }
@@ -87,8 +87,14 @@ fun List<Word>.learnWords() {
     }
 }
 
-fun saveDictionary() {
-    loadDictionary()
+fun saveDictionary(answers: List<Word>) {
+    val wordsFile: File = File("words.txt")
+    wordsFile.writeText(answers.toString())
+
+    val fileContent = answers.joinToString("\n") {
+        "${it.englishText}|${it.russianText}|${it.correctAnswersCount}"
+    }
+    wordsFile.writeText(fileContent)
 }
 
 fun List<Word>.showStatistics() {
@@ -99,5 +105,3 @@ fun List<Word>.showStatistics() {
 
     println("Выучено ${mutableList.size} из ${this.size} слов | ${((mutableList.size.toDouble() / this.size) * 100).toInt()}%")
 }
-
-
