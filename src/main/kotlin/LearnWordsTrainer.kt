@@ -12,8 +12,10 @@ data class Question(
     val correctAnswer : Word,
 )
 
+const val MAX_CORRECT_ANSWER_COUNT = 3
+const val PERCENTAGE_MULTIPLIER = 100
 
-class LearnWordsTrainer {
+class LearnWordsTrainer(private val wordsFileName: String) {
 
     private var question: Question? = null
     val dictionary: List<Word> = loadDictionary()
@@ -21,14 +23,14 @@ class LearnWordsTrainer {
     fun getStatistics(): Statistics {
         val learned = trainer.dictionary.filter { it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT }.size
         val total = trainer.dictionary.size
-        val percent = learned * 100 / total
+        val percent = learned * PERCENTAGE_MULTIPLIER / total
         return Statistics(learned, total, percent)
 
     }
 
     fun getNextQuestion(): Question? {
 
-        val notLearnedist = dictionary.filter { it.correctAnswersCount < MAX_CORRECT_ANSWER_COUNT }
+        val notLearnedist = dictionary.filter { it.correctAnswersCount <= MAX_CORRECT_ANSWER_COUNT }
         if (notLearnedist.isEmpty()) return null
 
         val questionWord = notLearnedist.take(4).shuffled()
@@ -56,7 +58,7 @@ class LearnWordsTrainer {
     }
 
     private fun loadDictionary(): List<Word> {
-        val wordsFile: File = File("words.txt")
+        val wordsFile: File = File(wordsFileName)
         wordsFile.createNewFile()
 
         val dictionary: MutableList<Word> = mutableListOf()
@@ -70,7 +72,7 @@ class LearnWordsTrainer {
     }
 
     private fun saveDictionary(answers: List<Word>) {
-        val wordsFile: File = File("words.txt")
+        val wordsFile: File = File(wordsFileName)
         wordsFile.writeText(answers.toString())
 
         val fileContent = answers.joinToString("\n") {

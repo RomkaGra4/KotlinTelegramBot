@@ -1,7 +1,6 @@
 package org.example
 
-const val MAX_CORRECT_ANSWER_COUNT = 3
-val trainer = LearnWordsTrainer()
+val trainer = LearnWordsTrainer("words.txt")
 
 fun Question.asConsoleString(): String{
     val variants = this.variants.mapIndexed { index: Int, word: Word -> " ${index + 1} - ${word.russianText}" }
