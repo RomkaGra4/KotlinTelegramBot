@@ -1,21 +1,25 @@
 package org.example
 
-val trainer = LearnWordsTrainer("words.txt")
+val trainer = LearnWordsTrainer("words.txt",4)
 
 fun Question.asConsoleString(): String{
     val variants = this.variants.mapIndexed { index: Int, word: Word -> " ${index + 1} - ${word.russianText}" }
         .joinToString(separator =  "\n")
     return this.correctAnswer.englishText + "\n" + variants +"\n. 0 - выйти в МЕНЮ"
-
 }
 
 fun main() {
 
-
     while (true) {
 
         println("\nМеню:")
-        when (readln().toInt()) {
+        println("1 - учить слова;")
+        println("2 - статистика;")
+        println("0 - выход.")
+
+        val input = readlnOrNull()?.toIntOrNull()
+
+        when (input) {
             1 -> {
                 println("УЧИТЬ СЛОВА")
                 trainer.dictionary.learnWords()
@@ -49,7 +53,7 @@ fun List<Word>.learnWords() {
 
                 println("Это правильный ответ!\n")
             } else {
-                println("Неправильно!")
+                println("Неправильно! ")
             }
         }
 

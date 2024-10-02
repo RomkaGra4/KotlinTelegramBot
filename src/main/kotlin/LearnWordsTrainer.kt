@@ -15,7 +15,7 @@ data class Question(
 const val MAX_CORRECT_ANSWER_COUNT = 3
 const val PERCENTAGE_MULTIPLIER = 100
 
-class LearnWordsTrainer(private val wordsFileName: String) {
+class LearnWordsTrainer(private val wordsFileName: String, private val countOfQuestionWords: Int = 4) {
 
     private var question: Question? = null
     val dictionary: List<Word> = loadDictionary()
@@ -30,11 +30,17 @@ class LearnWordsTrainer(private val wordsFileName: String) {
 
     fun getNextQuestion(): Question? {
 
-        val notLearnedist = dictionary.filter { it.correctAnswersCount <= MAX_CORRECT_ANSWER_COUNT }
+        val notLearnedist = dictionary.filter { it.correctAnswersCount < MAX_CORRECT_ANSWER_COUNT }
         if (notLearnedist.isEmpty()) return null
+        val questionWord = if (notLearnedist.size < countOfQuestionWords){
+            val learnedist = dictionary.filter { it.correctAnswersCount >= MAX_CORRECT_ANSWER_COUNT }.shuffled()
+            notLearnedist.shuffled().take(countOfQuestionWords) + learnedist.take(countOfQuestionWords - notLearnedist.size)
+        } else {
+            notLearnedist.shuffled().take(countOfQuestionWords)
+        }.shuffled()
 
-        val questionWord = notLearnedist.take(4).shuffled()
         val correctAnswer = questionWord.random()
+
         question = Question(
             variants = questionWord,
             correctAnswer = correctAnswer,
@@ -58,17 +64,22 @@ class LearnWordsTrainer(private val wordsFileName: String) {
     }
 
     private fun loadDictionary(): List<Word> {
-        val wordsFile: File = File(wordsFileName)
-        wordsFile.createNewFile()
 
-        val dictionary: MutableList<Word> = mutableListOf()
-        wordsFile.readLines().map {
-            val text = it.split("|")
+        try {
+            val wordsFile: File = File(wordsFileName)
+            wordsFile.createNewFile()
 
-            val word = Word(englishText = text[0], russianText = text[1])
-            dictionary.add(word)
+            val dictionary: MutableList<Word> = mutableListOf()
+            wordsFile.readLines().map {
+                val text = it.split("|")
+
+                val word = Word(englishText = text[0], russianText = text[1])
+                dictionary.add(word)
+            }
+            return dictionary
+        } catch (e: IndexOutOfBoundsException) {
+            throw IllegalArgumentException("некорректный файл")
         }
-        return dictionary
     }
 
     private fun saveDictionary(answers: List<Word>) {
