@@ -5,32 +5,23 @@ import java.net.http.HttpResponse
 
 const val HOST = "https://api.telegram.org"
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>){
 
     val botToken = args[0]
     var updateId = 0
 
-    val updateIdRegex: Regex = "\"update_id\":(\\d+)".toRegex()
-    val messageTextRegex: Regex = "\"text\":\"(.+?)\"".toRegex()
-
-    while (true) {
+    while (true){
         Thread.sleep(3000)
         val updates: String = getUpdates(botToken, updateId)
         println(updates)
 
-        val updateIdMatch: MatchResult? = updateIdRegex.find(updates)
+        val startUpdateId = updates.lastIndexOf("update_id")
+        val endUpdateId = updates.lastIndexOf(",\n\"message\"")
+        if (startUpdateId == -1 || endUpdateId == -1) continue
+        val updateIdString = updates.substring(startUpdateId + 11, endUpdateId)
+        println(updateIdString)
 
-        if (updateIdMatch != null) {
-            val updateIdString = updateIdMatch.groups[1]?.value
-            if (updateIdString != null)
-                updateId = updateIdString.toInt() + 1
-            println("\nNext update_id: $updateId")
-        }
-
-        val matchResult: MatchResult? = messageTextRegex.find(updates)
-        val groups = matchResult?.groups
-        val text = groups?.get(1)?.value
-        println("Message text: $text\n")
+        updateId = updateIdString.toInt() + 1
     }
 }
 
@@ -55,4 +46,28 @@ fun getMe(botToken: String): String {
 
     return responseGetMe.body()
 
+}
+
+fun sendMessage(botToken: String, chatId: String, text: String): String {
+    val urlSendMessage = "$HOST/bot$botToken/sendMessage"
+    val params = "chat_id=$chatId&text=$text"
+
+    val client: HttpClient = HttpClient.newBuilder().build()
+
+    val requestSendMessage: HttpRequest = HttpRequest.newBuilder()
+        .uri(URI.create(urlSendMessage))
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .POST(HttpRequest.BodyPublishers.ofString(params))
+        .build()
+
+    val responseSendMessage: HttpResponse<String> =
+        client.send(requestSendMessage, HttpResponse.BodyHandlers.ofString())
+
+    return responseSendMessage.body()
+}
+
+fun extractChatId(updates: String): String? {
+    val regex = """"chat":\s*{\s*"id":\s*(\d+)""".toRegex()
+    val matchResult = regex.find(updates)
+    return matchResult?.groups?.get(1)?.value
 }
